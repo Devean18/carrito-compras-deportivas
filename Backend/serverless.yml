@@ -1,0 +1,208 @@
+service: carrito-compras-backend
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  environment:
+    DYNAMODB_ENDPOINT: ${env:DYNAMODB_ENDPOINT, 'http://localhost:8000'}
+    MINIO_ENDPOINT: ${env:MINIO_ENDPOINT, 'localhost'}
+    MINIO_PORT: ${env:MINIO_PORT, '9000'}
+    MINIO_ACCESS_KEY: ${env:MINIO_ACCESS_KEY, 'minioadmin'}
+    MINIO_SECRET_KEY: ${env:MINIO_SECRET_KEY, 'minioadmin'}
+    MINIO_BUCKET: ${env:MINIO_BUCKET, 'products'}
+    JWT_SECRET: ${env:JWT_SECRET, 'supersecretjwtkey2024'}
+    JWT_EXPIRES_IN: ${env:JWT_EXPIRES_IN, '24h'}
+    EMAIL_HOST: ${env:EMAIL_HOST, 'smtp.gmail.com'}
+    EMAIL_PORT: ${env:EMAIL_PORT, '587'}
+    EMAIL_USER: ${env:EMAIL_USER, ''}
+    EMAIL_PASS: ${env:EMAIL_PASS, ''}
+    AWS_ACCESS_KEY_ID: local
+    AWS_SECRET_ACCESS_KEY: local
+    AWS_REGION: us-east-1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:*
+          Resource: '*'
+
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: 4000
+    lambdaPort: 4002
+    host: 0.0.0.0
+    noPrependStageInUrl: false
+
+functions:
+  # ─── AUTH ───────────────────────────────────────────────────────────────
+  register:
+    handler: src/handlers/auth.register
+    events:
+      - http:
+          path: auth/register
+          method: post
+          cors: true
+
+  login:
+    handler: src/handlers/auth.login
+    events:
+      - http:
+          path: auth/login
+          method: post
+          cors: true
+
+  # ─── PRODUCTS ────────────────────────────────────────────────────────────
+  getProducts:
+    handler: src/handlers/products.getProducts
+    events:
+      - http:
+          path: products
+          method: get
+          cors: true
+
+  getProductById:
+    handler: src/handlers/products.getProductById
+    events:
+      - http:
+          path: products/{id}
+          method: get
+          cors: true
+
+  createProduct:
+    handler: src/handlers/products.createProduct
+    events:
+      - http:
+          path: products
+          method: post
+          cors: true
+
+  updateProduct:
+    handler: src/handlers/products.updateProduct
+    events:
+      - http:
+          path: products/{id}
+          method: put
+          cors: true
+
+  deleteProduct:
+    handler: src/handlers/products.deleteProduct
+    events:
+      - http:
+          path: products/{id}
+          method: delete
+          cors: true
+
+  # ─── CART ────────────────────────────────────────────────────────────────
+  getCart:
+    handler: src/handlers/cart.getCart
+    events:
+      - http:
+          path: cart
+          method: get
+          cors: true
+
+  addToCart:
+    handler: src/handlers/cart.addToCart
+    events:
+      - http:
+          path: cart/add
+          method: post
+          cors: true
+
+  removeFromCart:
+    handler: src/handlers/cart.removeFromCart
+    events:
+      - http:
+          path: cart/{productId}
+          method: delete
+          cors: true
+
+  updateCartItem:
+    handler: src/handlers/cart.updateCartItem
+    events:
+      - http:
+          path: cart/{productId}
+          method: put
+          cors: true
+
+  clearCart:
+    handler: src/handlers/cart.clearCart
+    events:
+      - http:
+          path: cart
+          method: delete
+          cors: true
+
+  # ─── ORDERS ──────────────────────────────────────────────────────────────
+  checkout:
+    handler: src/handlers/orders.checkout
+    events:
+      - http:
+          path: orders/checkout
+          method: post
+          cors: true
+
+  getOrders:
+    handler: src/handlers/orders.getOrders
+    events:
+      - http:
+          path: orders
+          method: get
+          cors: true
+
+  cancelOrder:
+    handler: src/handlers/orders.cancelOrder
+    events:
+      - http:
+          path: orders/{id}/cancel
+          method: patch
+          cors: true
+
+  getOrderById:
+    handler: src/handlers/orders.getOrderById
+    events:
+      - http:
+          path: orders/{id}
+          method: get
+          cors: true
+
+  deleteOrder:
+    handler: src/handlers/orders.deleteOrder
+    events:
+      - http:
+          path: orders/{id}
+          method: delete
+          cors: true
+
+  # ─── FAVORITES ───────────────────────────────────────────────────────────
+  getFavorites:
+    handler: src/handlers/favorites.getFavorites
+    events:
+      - http:
+          path: favorites
+          method: get
+          cors: true
+
+  addFavorite:
+    handler: src/handlers/favorites.addFavorite
+    events:
+      - http:
+          path: favorites/{productId}
+          method: post
+          cors: true
+
+  removeFavorite:
+    handler: src/handlers/favorites.removeFavorite
+    events:
+      - http:
+          path: favorites/{productId}
+          method: delete
+          cors: true

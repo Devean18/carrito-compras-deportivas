@@ -1,0 +1,27 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Serverless Framework
+.serverless/
+
+# DynamoDB Local
+DynamoDBLocal_lib/
+DynamoDBLocal.jar
+
+# Imágenes locales de los productos 
+assets/products/*.jpg
+assets/products/*.jpeg
+assets/products/*.png
+assets/products/*.webp
+
+# OS
+.DS_Store
+Thumbs.db
