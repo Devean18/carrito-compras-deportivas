@@ -61,19 +61,19 @@ Todo el sistema es ejecutable en local.
 2. **Clonar el repositorio**
 
 ```bash
-git clone <url-del-repo>
-cd carrito-compras-deportivo
+    git clone https://github.com/devean18/carrito-compras-deportivas.git
+    cd carrito-compras-deportivas
 ```
   
 
 3. **Instalar dependencias**
 
 ```bash
-cd Backend
-npm install
+    cd Backend
+    npm install
 
-cd ../Frontend
-npm install
+    cd ../Frontend
+    npm install
 ```
 
 4. **Configuracion de entorno**
@@ -135,64 +135,50 @@ npm install
       contraseña: `minioadmin`)
 
 
-6. **Ejecutar backend**
+6. **Backend**
 
-  ```bash
-  cd Backend
-  npx serverless offline
-  # o
-  npm run dev
+```bash
+   cd Backend
+
+   npx serverless offline
+   # o
+   npm run dev
   ```
   Backend disponible en: http://localhost:4000
 
-7. **Ejecutar frontend**
-  ```bash
+
+7. **Frontend**
+
+```bash
   cd Frontend
   npm run dev
   ```
   Frontend disponible en: http://localhost:5173
 
----
+8. **Cargar datos de muestra (seed)**
 
-
-   - Abre una terminal en esa carpeta y ejecuta:
-     ```bash
-     java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb
-   - Deja esta terminal abierta; DynamoDB Local debe estar corriendo durante todo el uso del sistema.
-
-2. **Levantar el servicio de almacenamiento (MinIO)**
-     ```bash
-     minio.exe server C:\minio-data --console-address ":9001"
-     ```
-   - Accede a la consola web en [http://localhost:9001](http://localhost:9001) con usuario `minioadmin` y contraseña `minioadmin`.
-   - Deja esta terminal abierta; MinIO debe estar corriendo durante todo el uso del sistema.
-
-3. **Iniciar el backend (Serverless Offline)**
-   - Abre una nueva terminal y navega a la carpeta `Backend` del proyecto.
-     ```bash
-     npm install
-     ```
-   - Ejecuta el backend en modo offline:
-
-4. **Iniciar el frontend (Vite)**
-   - Abre una nueva terminal y navega a la carpeta `Frontend` del proyecto.
-   - Ejecuta el frontend:
-     npm run dev
-     ```
+```bash
+   cd Backend
+   node seed.js
+   ```
+   Esto insertará productos de ejemplo en DynamoDB Local.
 
 ---
 
 
-## URLs de Acceso
+## URLs del sistema
+
 - **Frontend:** http://localhost:5173
+
 - **Backend (API):** http://localhost:4000
+
 - **MinIO (S3 local):** http://localhost:9001
 
 ---
 
 
-## Formato de Respuesta del Backend
-Respuestas en formato:
+## Respuesta estándar del API
+
 ```json
 {
   "data": { ... },
@@ -217,33 +203,40 @@ Carrito de Compras/
 ---
 
 ## Notas Técnicas
+
+- DynamoDB → DynamoDB Local
+
 - Las imágenes de productos se simulan en MinIO 
-- El correo de confirmación se envía solo en modo desarrollo usando Ethereal (ver URL de vista previa en consola)
+
 - Las instrucciones detalladas y endpoints están en los README internos
 
+- El correo de confirmación se envía usando Ethereal 
 
-## Variables de entorno (Backend)
 
-Ejemplo `.env` para Backend:
-```
-PORT=4000
-JWT_SECRET=your_secret
-DYNAMODB_ENDPOINT=http://localhost:8000
-MINIO_ENDPOINT=http://localhost:9000
-MINIO_ACCESS_KEY=minioadmin
-MINIO_SECRET_KEY=minioadmin
-```
+### ¿Cómo ver el correo de confirmación?
 
-## Variables de entorno (Frontend)
+1. Realizar una compra desde el frontend o usando el endpoint `/dev/orders/checkout`.
 
-Ejemplo `.env` para Frontend:
-```
-VITE_API_URL=http://localhost:4000/dev
-```
+2. En la consola donde corre el backend, visualizar una línea como:
+
+  previewUrl: 'https://ethereal.email/message/XXXXX' 
+  
+3. Abrir URL 
+
 ---
 
+## Logging
+
+Los logs se almacenan en la carpeta `logs/`:
+
+- `logs/combined.log` — todos los logs
+- `logs/error.log` — solo errores
+
+
 ## Documentación Interna
+
 - [Backend/README.md](Backend/README.md): detalles de endpoints, configuración y lógica del backend
+
 - [Frontend/README.md](Frontend/README.md): detalles de ejecución y estructura del frontend
 
 ---
